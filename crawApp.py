@@ -90,3 +90,4 @@ def getAppDetails(appUrl):
 app_url = "https://itunes.apple.com/us/app/angry-birds/id343200656?mt=8"
 app_details = getAppDetails(app_url)
 print(app_details)
+
