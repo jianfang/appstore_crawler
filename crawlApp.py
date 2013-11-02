@@ -11,7 +11,7 @@ def getPageAsSoup(url):
         print("HTTPError with: ", url, e)
         return None
     the_page = response.read()
-    soup = BeautifulSoup( the_page )
+    soup = BeautifulSoup(the_page)
 
     return soup
 
