@@ -55,6 +55,21 @@ def getAllCategories():
         #allCategories.extend( aDiv.get( 'href' ) for aDiv in columnDiv.findAll( 'a', href = re.compile( '^https://itunes.apple.com/us/genre' ) ) )
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #getAllCategories()
 getAppsInCategory("https://itunes.apple.com/us/genre/ios-weather/id6001?mt=8")
 #getPopAppsInCategory("https://itunes.apple.com/us/genre/ios-weather/id6001?mt=8")
