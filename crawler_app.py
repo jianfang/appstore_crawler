@@ -19,6 +19,27 @@ def getAppDetails(appUrl):
     appDetails['title'] = titleDiv.find( 'h1' ).getText()
     appDetails['developer'] = titleDiv.find( 'h2' ).getText()
 
+
+    centerDiv = soup.find( 'div', {'class' : 'center-stack'} )
+    if not centerDiv:
+        return None
+
+    imageDiv = centerDiv.find('div', {'class' : 'swoosh lockup-container application large screenshots'})
+    if imageDiv:
+        iPhoneImages = []
+        iPadImages = []
+        for image in imageDiv.findAll('img'):
+            alt = image.get('alt')
+            if alt.find("iPhone") == 0:
+                iPhoneImages.append(image.get('src'))
+            elif alt.find("iPad") == 0:
+                iPadImages.append(image.get('src'))
+        if len(iPhoneImages) > 0:
+            appDetails['iPhoneImages'] = iPhoneImages
+        if len(iPadImages) > 0:
+            appDetails['iPadImages'] = iPadImages
+
+
     detailsDiv = soup.find( 'div', {'id' : 'left-stack'} )
     if not detailsDiv:
         return None
@@ -57,6 +78,11 @@ def getAppDetails(appUrl):
         appDetails['rating'] = customerRating[0].strip()
         appDetails['reviewers'] = customerRating[1].strip()
 
+    iconDiv = detailsDiv.find('div', {'class' : 'artwork'})
+    if iconDiv:
+        appDetails['icon'] = iconDiv.find('img').get('src')
+
+
     appLinksDiv = soup.find( 'div', {'class' : 'app-links'} )
     if appLinksDiv:
         for link in appLinksDiv.findAll( 'a', {'class' : 'see-all'} ):
@@ -69,12 +95,15 @@ def getAppDetails(appUrl):
             elif text.endswith('Agreement'):
                 appDetails['license'] = href
 
-    #apps_discovered.append( appUrl )
 
+    #apps_discovered.append( appUrl )
     return appDetails
 
-app_url = "https://itunes.apple.com/us/app/angry-birds/id343200656?mt=8"
+#app_url = "https://itunes.apple.com/us/app/angry-birds/id343200656?mt=8"
+#app_url = "https://itunes.apple.com/us/app/isnowreport/id412841793?mt=8"
+app_url = "https://itunes.apple.com/us/app/appzapp-hd-pro-daily-new-apps/id428248004?mt=8"
 app_details = getAppDetails(app_url)
+
 print(app_details)
 
 
