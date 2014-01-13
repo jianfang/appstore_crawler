@@ -100,8 +100,8 @@ def getAppDetails(appUrl):
     return appDetails
 
 #app_url = "https://itunes.apple.com/us/app/angry-birds/id343200656?mt=8"
-#app_url = "https://itunes.apple.com/us/app/isnowreport/id412841793?mt=8"
-app_url = "https://itunes.apple.com/us/app/appzapp-hd-pro-daily-new-apps/id428248004?mt=8"
+app_url = "https://itunes.apple.com/us/app/isnowreport/id412841793?mt=8"
+#app_url = "https://itunes.apple.com/us/app/appzapp-hd-pro-daily-new-apps/id428248004?mt=8"
 app_details = getAppDetails(app_url)
 
 print(app_details)
