@@ -3,6 +3,9 @@ __author__ = 'sid'
 import urllib.request
 from bs4 import BeautifulSoup
 
+DATA_DIR = "data"
+DATA_APP_CAT_FILE = "app_cat"
+DATA_APP_URL_FILE = "app_urls"
 
 def getPageAsSoup(url):
     try:

@@ -1,6 +1,9 @@
 __author__ = 'sid'
 
+import os
+
 import common
+from common import *
 
 def getAppDetails(appUrl):
     #if appUrl in apps_discovered: return None
@@ -23,6 +26,14 @@ def getAppDetails(appUrl):
     centerDiv = soup.find( 'div', {'class' : 'center-stack'} )
     if not centerDiv:
         return None
+
+    for prod_review in centerDiv.findAll('div', {'class' : 'product-review'}):
+        if 'Description' in prod_review.get('metrics-loc'):
+            desc = prod_review.find('p')
+            appDetails['description'] = desc
+        elif 'What\'s New' in prod_review.get('metrics-loc'):
+            whats_new = prod_review.find('p')
+            appDetails['whats_new'] = whats_new
 
     imageDiv = centerDiv.find('div', {'class' : 'swoosh lockup-container application large screenshots'})
     if imageDiv:
@@ -82,7 +93,6 @@ def getAppDetails(appUrl):
     if iconDiv:
         appDetails['icon'] = iconDiv.find('img').get('src')
 
-
     appLinksDiv = soup.find( 'div', {'class' : 'app-links'} )
     if appLinksDiv:
         for link in appLinksDiv.findAll( 'a', {'class' : 'see-all'} ):
@@ -95,17 +105,53 @@ def getAppDetails(appUrl):
             elif text.endswith('Agreement'):
                 appDetails['license'] = href
 
-
     #apps_discovered.append( appUrl )
     return appDetails
 
-#app_url = "https://itunes.apple.com/us/app/angry-birds/id343200656?mt=8"
-app_url = "https://itunes.apple.com/us/app/isnowreport/id412841793?mt=8"
+def dumpApp(app_detail, of):
+    text = u"'title': '" + app_detail['title'] + "'"
+    text += '\n'
+    print(text)
+    of.write(text.encode('utf8'))
+
+def getAllAppData():
+    name = ""
+    for name in os.listdir("./" + DATA_DIR):
+        #print(name)
+        name = "./" + DATA_DIR + "/" + name
+        if os.path.isdir(name):
+            app_url_file = name + "/" + DATA_APP_URL_FILE
+            if os.path.exists(app_url_file):
+                app_count = 0
+                file_index = 0
+                # create the 1st data file
+                app_data_file = name + "/app_data_" + str(file_index)
+                of = open(app_data_file, 'wb')
+
+                print(app_url_file)
+                f = open(app_url_file)
+                for line in f:
+                    # create a new data file
+                    if app_count == 1000:
+                        of.close()
+                        app_count = 0
+                        file_index += 1
+                        app_data_file = name + "/app_data_" + str(file_index)
+                        of = open(app_data_file, 'wb')
+
+                    app_detail = getAppDetails(line)
+                    print(app_detail['title'])
+                    dumpApp(app_detail, of)
+                    app_count += 1
+                f.close()
+
+app_url = "https://itunes.apple.com/us/app/angry-birds/id343200656?mt=8"
+#app_url = "https://itunes.apple.com/us/app/isnowreport/id412841793?mt=8"
 #app_url = "https://itunes.apple.com/us/app/appzapp-hd-pro-daily-new-apps/id428248004?mt=8"
 app_details = getAppDetails(app_url)
-
 print(app_details)
 
+#getAllAppData()
 
 
 
