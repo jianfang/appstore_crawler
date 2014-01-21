@@ -88,6 +88,8 @@ def getAppDetails(appUrl):
         customerRating = customerRatingDivs[-1].get( 'aria-label' ).split( ',' )
         appDetails['rating'] = customerRating[0].strip()
         appDetails['reviewers'] = customerRating[1].strip()
+    else:
+        appDetails['rating'] = 'N/A'
 
     iconDiv = detailsDiv.find('div', {'class' : 'artwork'})
     if iconDiv:
@@ -110,6 +112,9 @@ def getAppDetails(appUrl):
 
 def dumpApp(app_detail, of):
     text = u"'title': '" + app_detail['title'] + "'"
+    text += ", 'rating': '" + app_detail['rating'] + "'"
+    text += ", 'app_url': '" + app_detail['app_url'] + "'"
+    text += ", 'description': '" + str(app_detail['description']) + "'"
     text += '\n'
     print(text)
     of.write(text.encode('utf8'))
@@ -148,10 +153,12 @@ def getAllAppData():
 app_url = "https://itunes.apple.com/us/app/angry-birds/id343200656?mt=8"
 #app_url = "https://itunes.apple.com/us/app/isnowreport/id412841793?mt=8"
 #app_url = "https://itunes.apple.com/us/app/appzapp-hd-pro-daily-new-apps/id428248004?mt=8"
-app_details = getAppDetails(app_url)
-print(app_details)
+#app_url = "https://itunes.apple.com/us/app/aar-planner/id583324413?mt=8"
+#app_details = getAppDetails(app_url)
+#print(app_details)
+#print("'description': '" + str(app_details['description']))
 
-#getAllAppData()
+getAllAppData()
 
 
 
