@@ -111,13 +111,17 @@ def getAppDetails(appUrl):
     return appDetails
 
 def dumpApp(app_detail, of):
+    if app_detail == None:
+        return
+
+    print(app_detail['title'])
     text = u"'title': '" + app_detail['title'] + "'"
     text += ", 'rating': '" + app_detail['rating'] + "'"
     text += ", 'app_url': '" + app_detail['app_url'] + "'"
     text += ", 'description': '" + str(app_detail['description']) + "'"
     text += '\n'
     print(text)
-    of.write(text.encode('utf8'))
+    of.write(bytes(text, 'UTF-8'))
 
 def getAllAppData():
     name = ""
@@ -145,12 +149,73 @@ def getAllAppData():
                         of = open(app_data_file, 'wb')
 
                     app_detail = getAppDetails(line)
-                    print(app_detail['title'])
                     dumpApp(app_detail, of)
                     app_count += 1
+
+                of.close()
                 f.close()
 
-app_url = "https://itunes.apple.com/us/app/angry-birds/id343200656?mt=8"
+def getAllAppDataRetry():
+    name = ""
+    for name in os.listdir("./" + DATA_DIR):
+        if name != "ios-weather":
+            continue
+
+        #print(name)
+        name = "./" + DATA_DIR + "/" + name
+        if os.path.isdir(name):
+            app_url_file = name + "/" + DATA_APP_URL_FILE
+            if os.path.exists(app_url_file):
+                print(app_url_file)
+
+                count = 0
+                app_count_file = name + "/" + DATA_APP_COUNT_FILE
+                if os.path.exists(app_count_file):
+                    f = open(app_count_file)
+                    count = int(f.readline())
+                    f.close()
+
+                if count == 0:
+                    # create the 1st data file
+                    app_data_file = name + "/app_data_0"
+                    of = open(app_data_file, 'wb')
+
+                app_count = 0
+                f = open(app_url_file)
+                for line in f:
+                    if count == 0:
+                        # create a new data file
+                        if app_count % 1000 == 0:
+                            of.close()
+                            file_index = round(app_count/1000)
+                            app_data_file = name + "/app_data_" + str(file_index)
+                            of = open(app_data_file, 'wb')
+
+                        app_detail = getAppDetails(line)
+                        dumpApp(app_detail, of)
+                    else:
+                        if app_count == count - 1:
+                            file_index = int(app_count/1000)
+                            app_data_file = name + "/app_data_" + str(file_index)
+                            of = open(app_data_file, 'a+b')
+                        elif app_count >= count:
+                            # create a new data file
+                            if app_count % 1000 == 0:
+                                of.close()
+                                file_index = round(app_count/1000)
+                                app_data_file = name + "/app_data_" + str(file_index)
+                                of = open(app_data_file, 'wb')
+
+                            app_detail = getAppDetails(line)
+                            dumpApp(app_detail, of)
+
+                    app_count += 1
+
+                of.close()
+                f.close()
+
+
+#app_url = "https://itunes.apple.com/us/app/angry-birds/id343200656?mt=8"
 #app_url = "https://itunes.apple.com/us/app/isnowreport/id412841793?mt=8"
 #app_url = "https://itunes.apple.com/us/app/appzapp-hd-pro-daily-new-apps/id428248004?mt=8"
 #app_url = "https://itunes.apple.com/us/app/aar-planner/id583324413?mt=8"
@@ -158,8 +223,8 @@ app_url = "https://itunes.apple.com/us/app/angry-birds/id343200656?mt=8"
 #print(app_details)
 #print("'description': '" + str(app_details['description']))
 
-getAllAppData()
-
+#getAllAppData()
+getAllAppDataRetry()
 
 
 
