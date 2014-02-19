@@ -2,9 +2,10 @@ __author__ = 'sid'
 
 import re
 import string
+import os
 
 import common
-
+from common import *
 
 def getPopAppsInCategory(categoryUrl):
     #url = categoryUrl + "&page=" + str( start_idx )
@@ -18,13 +19,22 @@ def getPopAppsInCategory(categoryUrl):
         print(appLink, text)
 
 
-def getAppsInCategory(categoryUrl):
+def getAppsInCategory(cat, categoryUrl, dump):
+    if dump:
+        f = open(DATA_DIR + '/' + cat + '/' + DATA_APP_URL_FILE, 'w')
+
     for alphabet in string.ascii_uppercase:
         url = categoryUrl + '&letter=' + alphabet
-        getAppInCategoryWithLetter(url)
+        getAppInCategoryWithLetter(url, f)
+
+    url = categoryUrl + '&letter=*'
+    getAppInCategoryWithLetter(url, f)
+
+    if dump:
+        f.close()
 
 
-def getAppInCategoryWithLetter(categoryUrl):
+def getAppInCategoryWithLetter(categoryUrl, f):
     previous_apps = []
     start_idx = 1
     while True:
@@ -37,11 +47,15 @@ def getAppInCategoryWithLetter(categoryUrl):
             break
         for appLink in allAppLinks:
             print(appLink)
+            f.write(appLink + '\n')
         previous_apps = allAppLinks
         start_idx += 1
 
 
-def getAllCategories():
+def getAllCategories(dump):
+    if dump:
+        f = open(DATA_DIR + '/' + DATA_APP_CAT_FILE, 'w')
+
     itunesStoreUrl = 'https://itunes.apple.com/us/genre/ios/id36?mt=8'
     mainPage = common.getPageAsSoup(itunesStoreUrl)
     allCategories = []
@@ -51,15 +65,37 @@ def getAllCategories():
         #print(columnDiv)
         for aDiv in columnDiv.findAll('a', href=re.compile('^https://itunes.apple.com/us/genre')):
             #print(aDiv)
-            cat = aDiv.get('href')
+            catUrl = aDiv.get('href')
             #title = aDiv.get('title')
             text = aDiv.string
-            print(cat, text)
-            total += 1
-        #allCategories.extend( aDiv.get( 'href' ) for aDiv in columnDiv.findAll( 'a', href = re.compile( '^https://itunes.apple.com/us/genre' ) ) )
+            print(catUrl, text)
+            if (text != "Games") & (text != "Newsstand"):
+                if dump:
+                    f.write(catUrl + ', ' + text + '\n')
+                total += 1
+
     print("Total Categories: ", total)
 
-#getAllCategories()
+    if dump:
+        f.close()
+
+def getApps(cat, dump):
+    f = open(DATA_DIR + '/' + DATA_APP_CAT_FILE)
+    for line in f:
+        url = line.partition(',')[0]
+        print(url)
+        m = re.search('ios-(\w|-)+', url)
+        appcat = m.group(0)
+        print(appcat)
+        if (len(cat) == 0) | ((len(cat) > 0) & (cat == appcat)):
+            os.makedirs(DATA_DIR + '/' + appcat, 0o777, True)
+            getAppsInCategory(cat, url, dump)
+
+dump = 1
+
+#getAllCategories(dump)
+getApps("ios-weather", 1)
+
 #getAppsInCategory("https://itunes.apple.com/us/genre/ios-weather/id6001?mt=8")
-getPopAppsInCategory("https://itunes.apple.com/us/genre/ios-weather/id6001?mt=8")
+#getPopAppsInCategory("https://itunes.apple.com/us/genre/ios-weather/id6001?mt=8")
 #getAppInCategoryWithLetter("https://itunes.apple.com/us/genre/ios-weather/id6001?mt=8&letter=W")
