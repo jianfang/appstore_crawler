@@ -3,6 +3,8 @@ __author__ = 'sid'
 import re
 import string
 import os
+import filecmp
+import shutil
 
 import common
 from common import *
@@ -53,8 +55,8 @@ def getAppInCategoryWithLetter(categoryUrl, f):
 
 
 def getAllCategories(dump):
-    if dump:
-        f = open(DATA_DIR + '/' + DATA_APP_CAT_FILE, 'w')
+    tmpCatFile = DATA_DIR + '/app_cat_tmp'
+    tmpf = open(tmpCatFile, 'w')
 
     itunesStoreUrl = 'https://itunes.apple.com/us/genre/ios/id36?mt=8'
     mainPage = common.getPageAsSoup(itunesStoreUrl)
@@ -70,14 +72,20 @@ def getAllCategories(dump):
             text = aDiv.string
             print(catUrl, text)
             if (text != "Games") & (text != "Newsstand"):
-                if dump:
-                    f.write(catUrl + ', ' + text + '\n')
+                tmpf.write(catUrl + ', ' + text + '\n')
                 total += 1
 
     print("Total Categories: ", total)
+    tmpf.close()
 
-    if dump:
-        f.close()
+    catFile = DATA_DIR + '/' + DATA_APP_CAT_FILE
+    if filecmp.cmp(tmpCatFile, catFile):
+        print("No update for app_cat.")
+    else:
+        print("app_cat updated.")
+        shutil.copyfile(tmpCatFile, catFile)
+
+    os.remove(tmpCatFile)
 
 def getApps(cat, dump):
     f = open(DATA_DIR + '/' + DATA_APP_CAT_FILE)
@@ -91,11 +99,12 @@ def getApps(cat, dump):
             os.makedirs(DATA_DIR + '/' + appcat, 0o777, True)
             getAppsInCategory(cat, url, dump)
 
-dump = 1
-
-#getAllCategories(dump)
-getApps("ios-weather", 1)
-
 #getAppsInCategory("https://itunes.apple.com/us/genre/ios-weather/id6001?mt=8")
 #getPopAppsInCategory("https://itunes.apple.com/us/genre/ios-weather/id6001?mt=8")
 #getAppInCategoryWithLetter("https://itunes.apple.com/us/genre/ios-weather/id6001?mt=8&letter=W")
+
+if __name__ == "__main__":
+    #getAllCategories(1)
+    #getApps("ios-weather", 1)
+    getApps("ios-books", 1)
+

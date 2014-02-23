@@ -158,7 +158,7 @@ def getAllAppData():
 def getAllAppDataRetry():
     name = ""
     for name in os.listdir("./" + DATA_DIR):
-        if name != "ios-weather":
+        if name != "ios-books":
             continue
 
         #print(name)
@@ -223,8 +223,9 @@ def getAllAppDataRetry():
 #print(app_details)
 #print("'description': '" + str(app_details['description']))
 
-#getAllAppData()
-getAllAppDataRetry()
+if __name__ == "__main__":
+    #getAllAppData()
+    getAllAppDataRetry()
 
 
 
