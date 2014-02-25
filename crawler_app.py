@@ -123,41 +123,8 @@ def dumpApp(app_detail, of):
     print(text)
     of.write(bytes(text, 'UTF-8'))
 
-def getAllAppData():
 def getAllAppData(cat):
     for name in os.listdir("./" + DATA_DIR):
-        #print(name)
-        if os.path.isdir(name):
-            app_url_file = name + "/" + DATA_APP_URL_FILE
-            if os.path.exists(app_url_file):
-                app_count = 0
-                file_index = 0
-                # create the 1st data file
-                app_data_file = name + "/app_data_" + str(file_index)
-                of = open(app_data_file, 'wb')
-
-                print(app_url_file)
-                f = open(app_url_file)
-                for line in f:
-                    # create a new data file
-                    if app_count == 1000:
-                        of.close()
-                        app_count = 0
-                        file_index += 1
-                        app_data_file = name + "/app_data_" + str(file_index)
-                        of = open(app_data_file, 'wb')
-
-                    app_detail = getAppDetails(line)
-                    dumpApp(app_detail, of)
-                    app_count += 1
-
-                of.close()
-                f.close()
-
-def getAllAppDataRetry():
-    name = ""
-    for name in os.listdir("./" + DATA_DIR):
-        if name != "ios-books":
         if (cat != "") & (name != cat):
             continue
 
@@ -224,8 +191,7 @@ def getAllAppDataRetry():
 #print("'description': '" + str(app_details['description']))
 
 if __name__ == "__main__":
-    #getAllAppData()
-    getAllAppDataRetry()
+    getAllAppData("")
 
 
 
