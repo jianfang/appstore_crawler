@@ -124,10 +124,9 @@ def dumpApp(app_detail, of):
     of.write(bytes(text, 'UTF-8'))
 
 def getAllAppData():
-    name = ""
+def getAllAppData(cat):
     for name in os.listdir("./" + DATA_DIR):
         #print(name)
-        name = "./" + DATA_DIR + "/" + name
         if os.path.isdir(name):
             app_url_file = name + "/" + DATA_APP_URL_FILE
             if os.path.exists(app_url_file):
@@ -159,6 +158,7 @@ def getAllAppDataRetry():
     name = ""
     for name in os.listdir("./" + DATA_DIR):
         if name != "ios-books":
+        if (cat != "") & (name != cat):
             continue
 
         #print(name)

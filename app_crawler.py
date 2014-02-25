@@ -4,6 +4,8 @@ from optparse import OptionParser
 
 import crawler_category
 from crawler_category import *
+import crawler_app
+from crawler_app import *
 
 
 if __name__ == "__main__":
@@ -37,4 +39,8 @@ if __name__ == "__main__":
 
     if options.cat != None:
         getApps(options.cat, 1)
+
+    if options.cat_detail != None:
+        getAllAppData(options.cat_detail)
+
 
