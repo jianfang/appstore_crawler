@@ -79,8 +79,12 @@ def getAllCategories(dump):
     tmpf.close()
 
     catFile = DATA_DIR + '/' + DATA_APP_CAT_FILE
-    if filecmp.cmp(tmpCatFile, catFile):
-        print("No update for app_cat.")
+    if os.path.exists(catFile):
+        if filecmp.cmp(tmpCatFile, catFile):
+            print("No update for app_cat.")
+        else:
+            print("app_cat updated.")
+            shutil.copyfile(tmpCatFile, catFile)
     else:
         print("app_cat updated.")
         shutil.copyfile(tmpCatFile, catFile)
