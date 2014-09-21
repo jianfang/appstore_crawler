@@ -4,14 +4,17 @@ import re
 
 import common
 from common import *
+import datetime
+from datetime import datetime
 
 def getAppCharts():
-    f = open(DATA_DIR + "/charts/top100_free_apps", 'w')
+    date = datetime.now().strftime('%Y-%m-%d')
+    f = open(DATA_DIR + "/charts/top100_free_apps_" + date, 'w')
 
     chartUrl = 'http://www.apple.com/itunes/charts/free-apps/'
     mainPage = common.getPageAsSoup(chartUrl)
     total = 0
-    appGrid = mainPage.find('section', {'class': 'section apps grid'})
+    appGrid = mainPage.find('section', {'class': 'section apps chart-grid'})
     #print(appGrid)
     i = 0
     for aDiv in appGrid.findAll('a', href=re.compile('^https://itunes.apple.com/us/app')):
