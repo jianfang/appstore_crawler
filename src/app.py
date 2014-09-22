@@ -24,6 +24,9 @@ class App:
     screenshots_iphone = []
     screenshots_ipad = []
 
+    updates = []
+
+#def genAppObject(appUrl)
 
 
 
