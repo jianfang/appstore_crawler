@@ -30,20 +30,20 @@ def getAppCharts(chartUrl, chartFile):
             i = 0
             continue
 
-    # print(aDiv)
-    appUrl = aDiv.get('href')
-    img = aDiv.find('img')
-    print(img)
-    title = img.get('alt')
-    iconUrl = img.get('src')
-    #text = aDiv.string
-    print(appUrl, title, iconUrl)
-    f.write(title + '\n')
-    f.write(iconUrl + '\n')
-    f.write(appUrl + '\n')
-    f.close()
+        # print(aDiv)
+        appUrl = aDiv.get('href')
+        img = aDiv.find('img')
+        #print(img)
+        title = img.get('alt')
+        iconUrl = img.get('src')
+        #text = aDiv.string
+        print(title, appUrl, '\n', iconUrl)
+        f.write(str(title.encode('utf8')))
+        f.write('\n')
+        f.write(iconUrl + '\n')
+        f.write(appUrl + '\n')
 
-#
+    f.close()
 
 # def putToDb():
 
