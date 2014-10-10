@@ -38,7 +38,7 @@ def getAppCharts(chartUrl, chartFile):
         iconUrl = img.get('src')
         #text = aDiv.string
         print(title, appUrl, '\n', iconUrl)
-        f.write(str(title.encode('utf8')))
+        f.write(title)
         f.write('\n')
         f.write(iconUrl + '\n')
         f.write(appUrl + '\n')
