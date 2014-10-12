@@ -11,11 +11,18 @@ def getAppDetails(appUrl):
     if not soup:
         return None
 
+    id = ""
+    begin = appUrl.rindex("/")
+    end = appUrl.index("?mt=")
+    if begin != -1 & end != -1:
+        id = appUrl[begin + 3:end]
+
     pTitleDiv = soup.find('p', {'class': 'title'})
     if pTitleDiv and pTitleDiv.getText() == 'One Moment Please.':
         return None
 
     appDetails = {}
+    appDetails['id'] = id
     appDetails['app_url'] = appUrl
 
     titleDiv = soup.find( 'div', {'id' : 'title'} )

@@ -7,20 +7,19 @@ from common import *
 import datetime
 from datetime import datetime
 
-CHARTS_URLS = ['http://www.apple.com/itunes/charts/free-apps/',
-               'http://www.apple.com/itunes/charts/paid-apps/']
-CHARTS_FILES = ['charts/top100_free_apps',
-                'charts/top100_paid_apps']
+def getAppCharts(country, type):
+    chartUrl = getChartUrl(country, type)
+    chartFile = getChartFile(country, type)
+    prefix = getApptUrlPrefix(country)
+    section = getChartPageSection(country)
 
-
-def getAppCharts(chartUrl, chartFile):
     date = datetime.now().strftime('%Y-%m-%d')
     f = open(DATA_DIR + "/" + chartFile + "_" + date, 'w')
     mainPage = common.getPageAsSoup(chartUrl)
     total = 0
-    appGrid = mainPage.find('section', {'class': 'section apps chart-grid'})
+    appGrid = mainPage.find('section', {'class': section})
     i = 0
-    for aDiv in appGrid.findAll('a', href=re.compile('^https://itunes.apple.com/us/app')):
+    for aDiv in appGrid.findAll('a', href=re.compile('^' + prefix)):
         if i == 0:
             i += 1
         elif i == 1:
@@ -33,11 +32,9 @@ def getAppCharts(chartUrl, chartFile):
         # print(aDiv)
         appUrl = aDiv.get('href')
         img = aDiv.find('img')
-        #print(img)
         title = img.get('alt')
         iconUrl = img.get('src')
-        #text = aDiv.string
-        print(title, appUrl, '\n', iconUrl)
+        print(title, '\n', appUrl, '\n', iconUrl)
         f.write(title)
         f.write('\n')
         f.write(iconUrl + '\n')
@@ -45,13 +42,17 @@ def getAppCharts(chartUrl, chartFile):
 
     f.close()
 
-# def putToDb():
+def dumpChartsGlobal():
+    getAppCharts('us', 'free')
+    getAppCharts('us', 'paid')
 
+def dumpChartsCN():
+    getAppCharts('cn', 'free')
+    getAppCharts('cn', 'paid')
 
 if __name__ == "__main__":
-    for u, file in zip(CHARTS_URLS, CHARTS_FILES):
-        getAppCharts(u, file)
-
+    #dumpChartsCN();
+    dumpChartsGlobal()
     #putToDb()
 
 

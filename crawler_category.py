@@ -58,8 +58,8 @@ def getAllCategories(dump):
     tmpCatFile = DATA_DIR + '/app_cat_tmp'
     tmpf = open(tmpCatFile, 'w')
 
-    itunesStoreUrl = 'https://itunes.apple.com/us/genre/ios/id36?mt=8'
-    mainPage = common.getPageAsSoup(itunesStoreUrl)
+    genreUrl = 'https://itunes.apple.com/us/genre/ios/id36?mt=8'
+    mainPage = common.getPageAsSoup(genreUrl)
     allCategories = []
     total = 0
     for column in ['list column first', 'list column', 'list column last']:
