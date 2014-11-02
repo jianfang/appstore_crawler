@@ -1,5 +1,7 @@
 __author__ = 'sid'
 
+import pickle
+
 class AppUpdate:
     version = "1.0"
     updated = "01-01-2007"
@@ -8,9 +10,10 @@ class AppUpdate:
     whatsnew = "NA"
 
 
-class App:
+class App(object):
     # basic
     name = "app name"
+    id = "000000000"
     category = "NA"
     description = "NA"
     seller = "NA"
@@ -25,6 +28,12 @@ class App:
     screenshots_ipad = []
 
     updates = []
+
+    def serialize(self):
+        fn = '../data/apps/000000000.pkl'
+        with open(fn, 'w') as f:                     # open file with write-mode
+            pickle_string = pickle.dump(self, f)
+            #print(pickle_string)
 
 #def genAppObject(appUrl)
 

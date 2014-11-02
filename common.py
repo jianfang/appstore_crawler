@@ -53,8 +53,8 @@ def getChartUrl(country, type):
     return url
 
 def getApptUrlPrefix(country):
-    url = 'https://itunes.apple.com/' + country + '/app'
-    return url
+    prefix = 'https://itunes.apple.com/' + country + '/app'
+    return prefix
 
 def getChartFile(country, type):
     file = 'charts'
@@ -70,4 +70,18 @@ def getChartPageSection(country):
     else: # us, jp, etc.
         section = 'section apps chart-grid'
     return section
+
+def getAppId(appLongUrl):
+    id = "000000000"
+    index = appLongUrl.find("/id")
+    if index > 0:
+        id = appLongUrl[index + 3 : index + 12]
+    return id
+
+def getAppUrl(country, appid):
+    url = getApptUrlPrefix(country) + "/id" + appid
+    return url
+
+
+
 
