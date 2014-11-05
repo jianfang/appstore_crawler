@@ -14,7 +14,7 @@ def getAppCharts(country, type):
     section = getChartPageSection(country)
 
     date = datetime.now().strftime('%Y-%m-%d')
-    f = open(DATA_DIR + "/" + chartFile + "_" + date, 'w')
+    f = open(DATA_DIR + "/" + chartFile + "_" + date, 'wb')
     mainPage = common.getPageAsSoup(chartUrl)
     total = 0
     appGrid = mainPage.find('section', {'class': section})
@@ -35,10 +35,9 @@ def getAppCharts(country, type):
         title = img.get('alt')
         iconUrl = img.get('src')
         print(title, '\n', appUrl, '\n', iconUrl)
-        f.write(title)
-        f.write('\n')
-        f.write(iconUrl + '\n')
-        f.write(appUrl + '\n')
+        str_out = title + '\n' + iconUrl + '\n' + appUrl + '\n'
+        bytes_out = str_out.encode('utf-8')
+        f.write(bytes_out)
 
     f.close()
 
@@ -51,7 +50,7 @@ def dumpChartsCN():
     getAppCharts('cn', 'paid')
 
 if __name__ == "__main__":
-    #dumpChartsCN();
+    dumpChartsCN();
     dumpChartsGlobal()
     #putToDb()
 
