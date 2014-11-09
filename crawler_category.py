@@ -1,5 +1,6 @@
 __author__ = 'sid'
 
+import time
 import re
 import string
 import os
@@ -28,6 +29,7 @@ def getAppsInCategory(cat, categoryUrl, dump):
     for alphabet in string.ascii_uppercase:
         url = categoryUrl + '&letter=' + alphabet
         getAppInCategoryWithLetter(url, f)
+        time.sleep(0.5)
 
     url = categoryUrl + '&letter=*'
     getAppInCategoryWithLetter(url, f)
@@ -52,6 +54,7 @@ def getAppInCategoryWithLetter(categoryUrl, f):
             f.write(appLink + '\n')
         previous_apps = allAppLinks
         start_idx += 1
+        time.sleep(0.5)
 
 
 def getAllCategories(dump):

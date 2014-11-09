@@ -1,6 +1,7 @@
 __author__ = 'sid'
 
 import os
+import pickle
 
 import common
 from common import *
@@ -24,6 +25,7 @@ def getAppDetails(appUrl):
     appDetails = {}
     appDetails['id'] = id
     appDetails['app_url'] = appUrl
+    appUpdate = {}
 
     titleDiv = soup.find( 'div', {'id' : 'title'} )
     appDetails['title'] = titleDiv.find( 'h1' ).getText()
@@ -37,10 +39,10 @@ def getAppDetails(appUrl):
     for prod_review in centerDiv.findAll('div', {'class' : 'product-review'}):
         if 'Description' in prod_review.get('metrics-loc'):
             desc = prod_review.find('p')
-            appDetails['description'] = desc
+            appDetails['description'] = str(desc)
         elif 'What\'s New' in prod_review.get('metrics-loc'):
             whats_new = prod_review.find('p')
-            appDetails['whats_new'] = whats_new
+            appUpdate['whats_new'] = str(whats_new)
 
     imageDiv = centerDiv.find('div', {'class' : 'swoosh lockup-container application large screenshots'})
     if imageDiv:
@@ -64,15 +66,27 @@ def getAppDetails(appUrl):
 
     priceDiv = detailsDiv.find( 'div', {'class' : 'price'} )
     if priceDiv:
-        appDetails['price'] = priceDiv.getText()
+        appUpdate['price'] = priceDiv.getText()
 
     categoryDiv = detailsDiv.find( 'li', {'class' : 'genre'} )
     if categoryDiv:
         appDetails['category'] = categoryDiv.find( 'a' ).getText()
+        appDetails['category-url'] = categoryDiv.find( 'a' )['href']
 
     releaseDateDiv = detailsDiv.find( 'li', {'class' : 'release-date'} )
     if releaseDateDiv:
-        appDetails['release_date'] = releaseDateDiv.getText()
+        releaseDateDiv.span.extract()
+        appUpdate['release_date'] = releaseDateDiv.getText()
+
+    versionDiv = releaseDateDiv.find_next_sibling('li')
+    if versionDiv:
+        versionDiv.span.extract()
+        appUpdate['version'] = versionDiv.getText()
+
+    sizeDiv = versionDiv.find_next_sibling('li')
+    if sizeDiv:
+        sizeDiv.span.extract()
+        appUpdate['size'] = sizeDiv.getText()
 
     languageDiv = detailsDiv.find( 'li', {'class' : 'language'} )
     if languageDiv:
@@ -82,9 +96,9 @@ def getAppDetails(appUrl):
     if contentRatingDiv:
         appDetails['content_rating'] = contentRatingDiv.getText()
 
-    contentRatingReasonDiv = detailsDiv.find( 'list app-rating-reasons' )
+    contentRatingReasonDiv = detailsDiv.find('list app-rating-reasons')
     if contentRatingReasonDiv:
-        appDetails['content_rating_reason'] = [li.getText() for li in contentRatingReasonDiv.findAll( 'li' )]
+        appDetails['content_rating_reason'] = [li.getText() for li in contentRatingReasonDiv.findAll('li')]
 
     compatibilityDiv = detailsDiv.find( 'p' )
     if compatibilityDiv:
@@ -92,11 +106,17 @@ def getAppDetails(appUrl):
 
     customerRatingDivs = detailsDiv.findAll( 'div', {'class' : 'rating', 'role': 'img'} )
     if customerRatingDivs:
+        currentRating = customerRatingDivs[0].get( 'aria-label' ).split( ',' )
+        appDetails['rating-current'] = currentRating[0].strip()
+        appDetails['rating-current-count'] = currentRating[1].strip()
         customerRating = customerRatingDivs[-1].get( 'aria-label' ).split( ',' )
-        appDetails['rating'] = customerRating[0].strip()
-        appDetails['reviewers'] = customerRating[1].strip()
+        appDetails['rating-all'] = customerRating[0].strip()
+        appDetails['rating-all-count'] = customerRating[1].strip()
     else:
-        appDetails['rating'] = 'N/A'
+        appDetails['rating-current'] = 'N/A'
+        appDetails['rating-current-count'] = 'N/A'
+        appDetails['rating-all'] = 'N/A'
+        appDetails['rating-all-count'] = 'N/A'
 
     iconDiv = detailsDiv.find('div', {'class' : 'artwork'})
     if iconDiv:
@@ -114,6 +134,9 @@ def getAppDetails(appUrl):
             elif text.endswith('Agreement'):
                 appDetails['license'] = href
 
+    print(appUpdate)
+    appDetails['update'] = appUpdate
+
     #apps_discovered.append( appUrl )
     return appDetails
 
@@ -129,6 +152,18 @@ def dumpApp(app_detail, of):
     text += '\n'
     print(text)
     of.write(bytes(text, 'UTF-8'))
+
+def pickleApp(app_detail):
+    if app_detail == None:
+        return
+
+    id = app_detail['id']
+    with open('../' + DATA_DIR + '/apps/' + id + '.pkl', 'wb') as f:
+         pickle.dump(app_detail, f)
+
+def unpickleApp(id):
+    with open('../' + DATA_DIR + '/apps/' + id + '.pkl', 'rb') as f:
+         return pickle.load(f)
 
 def getAllAppData(cat):
     for name in os.listdir("./" + DATA_DIR):
