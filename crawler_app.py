@@ -158,11 +158,11 @@ def pickleApp(app_detail):
         return
 
     id = app_detail['id']
-    with open('../' + DATA_DIR + '/apps/' + id + '.pkl', 'wb') as f:
+    with open('./' + DATA_DIR + '/apps/' + id + '.pkl', 'wb') as f:
          pickle.dump(app_detail, f)
 
 def unpickleApp(id):
-    with open('../' + DATA_DIR + '/apps/' + id + '.pkl', 'rb') as f:
+    with open('./' + DATA_DIR + '/apps/' + id + '.pkl', 'rb') as f:
          return pickle.load(f)
 
 def getAllAppData(cat):
