@@ -19,6 +19,20 @@ def getPageAsSoup(url):
 
     return soup
 
+
+def get_page_as_soup(url):
+    try:
+        opener = urllib.request.build_opener()
+        opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0')]
+        response = opener.open(url)
+    except urllib.error.HTTPError as e:
+        print("HTTPError with: ", url, e)
+        return None
+    the_page = response.read()
+    soup = BeautifulSoup(the_page)
+
+    return soup
+
 #------------------------------------------------------------------------------
 # App store URLs
 #

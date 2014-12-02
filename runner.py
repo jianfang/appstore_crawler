@@ -45,8 +45,10 @@ def get_cat_apps(q, i):
             for line in f:
                 print('worker:', i)
                 app_detail = getAppDetails(line)
-                pickleApp(app_detail)
+                pickle_app(app_detail)
                 app_count += 1
+                if app_count % 10 == 0:
+                    time.sleep(0.5)
             f.close()
             done = 1
         except:
@@ -67,7 +69,7 @@ def run_all_apps():
             if os.path.exists(app_url_file):
                 q.put(app_url_file)
 
-    for num in range(3):
+    for num in range(2):
         Process(target=get_cat_apps, args=(q, num)).start()
 
     # with Pool(processes=4) as pool:

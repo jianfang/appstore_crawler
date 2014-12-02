@@ -8,7 +8,7 @@ from common import *
 
 def getAppDetails(appUrl):
     #if appUrl in apps_discovered: return None
-    soup = common.getPageAsSoup(appUrl)
+    soup = common.get_page_as_soup(appUrl)
     if not soup:
         return None
 
@@ -28,15 +28,17 @@ def getAppDetails(appUrl):
     appUpdate = {}
 
     titleDiv = soup.find( 'div', {'id' : 'title'} )
-    appDetails['title'] = titleDiv.find( 'h1' ).getText()
-    appDetails['developer'] = titleDiv.find( 'h2' ).getText()
+    if not titleDiv:
+        return None
 
+    appDetails['title'] = titleDiv.find('h1').getText()
+    appDetails['developer'] = titleDiv.find('h2').getText()
 
     centerDiv = soup.find( 'div', {'class' : 'center-stack'} )
     if not centerDiv:
         return None
 
-    for prod_review in centerDiv.findAll('div', {'class' : 'product-review'}):
+    for prod_review in centerDiv.findAll('div', {'class': 'product-review'}):
         if 'Description' in prod_review.get('metrics-loc'):
             desc = prod_review.find('p')
             appDetails['description'] = str(desc)
@@ -44,7 +46,7 @@ def getAppDetails(appUrl):
             whats_new = prod_review.find('p')
             appUpdate['whats_new'] = str(whats_new)
 
-    imageDiv = centerDiv.find('div', {'class' : 'swoosh lockup-container application large screenshots'})
+    imageDiv = centerDiv.find('div', {'class': 'swoosh lockup-container application large screenshots'})
     if imageDiv:
         iPhoneImages = []
         iPadImages = []
@@ -134,11 +136,12 @@ def getAppDetails(appUrl):
             elif text.endswith('Agreement'):
                 appDetails['license'] = href
 
-    print(appUpdate)
     appDetails['update'] = appUpdate
 
+    print(appDetails['id'])
     #apps_discovered.append( appUrl )
     return appDetails
+
 
 def dumpApp(app_detail, of):
     if app_detail == None:
@@ -153,17 +156,20 @@ def dumpApp(app_detail, of):
     print(text)
     of.write(bytes(text, 'UTF-8'))
 
-def pickleApp(app_detail):
-    if app_detail == None:
+
+def pickle_app(app_detail):
+    if not app_detail:
         return
 
-    id = app_detail['id']
-    with open('./' + DATA_DIR + '/apps/' + id + '.pkl', 'wb') as f:
-         pickle.dump(app_detail, f)
+    app_id = app_detail['id']
+    with open('./' + DATA_DIR + '/apps/' + app_id + '.pkl', 'wb') as f:
+        pickle.dump(app_detail, f)
 
-def unpickleApp(id):
-    with open('./' + DATA_DIR + '/apps/' + id + '.pkl', 'rb') as f:
-         return pickle.load(f)
+
+def unpickle_app(app_id):
+    with open('./' + DATA_DIR + '/apps/' + app_id + '.pkl', 'rb') as f:
+        return pickle.load(f)
+
 
 def getAllAppData(cat):
     for name in os.listdir("./" + DATA_DIR):

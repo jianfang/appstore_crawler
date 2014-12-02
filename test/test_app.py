@@ -1,7 +1,5 @@
 __author__ = 'sid'
 
-import src.app
-from src.app import *
 import crawler_app
 from crawler_app import *
 
@@ -13,10 +11,10 @@ if __name__ == "__main__":
     appLongUrl = "https://itunes.apple.com/us/app/over/id535811906?mt=8"
     app_detail = getAppDetails(appLongUrl)
     #print(appDetail)
-    pickleApp(app_detail)
+    pickle_app(app_detail)
 
     print("pickle load")
-    app = unpickleApp('535811906')
+    app = unpickle_app('535811906')
     print(app)
 
 
